@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: create-user-table
-      author: your_name
+      author: v.piha
       changes:
         - createTable:
             tableName: users

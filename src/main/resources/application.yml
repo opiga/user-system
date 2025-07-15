@@ -11,6 +11,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        envers:
+          audit_table_suffix: _AUD
+          revision_field_name: REV
+          revision_type_field_name: REVTYPE
 
   liquibase:
     drop-first: false

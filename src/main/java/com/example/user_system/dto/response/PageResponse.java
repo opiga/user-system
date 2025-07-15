@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @AllArgsConstructor
@@ -13,7 +12,7 @@ import java.util.List;
 @Setter
 public class PageResponse<T> {
 
-    private List<T> content;
+    private List<T> users;
 
     private int pageNumber;
 

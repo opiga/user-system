@@ -1,5 +1,6 @@
 package com.example.user_system.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import org.hibernate.envers.Audited;
 
 @Entity
 @Getter
@@ -19,6 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "users")
+@Audited
 public class User {
 
     @Id
@@ -30,4 +32,8 @@ public class User {
     private String lastName;
 
     private String contactInformation;
+
+    @Column(unique = true)
+    private String email;
+
 }

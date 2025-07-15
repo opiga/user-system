@@ -1,5 +1,7 @@
-package com.example.user_system;
+package com.example.user_system.controller;
 
+import com.example.user_system.TestContainersConfiguration;
+import com.example.user_system.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -7,15 +9,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+@Import(TestContainersConfiguration.class)
+public class UserControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private String userJson;
 
@@ -23,19 +30,22 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
+
         userJson = """
             {
-              "firstName": "Test",
-              "lastName": "Test",
-              "contactInformation": "test@example.com"
+              "firstName": "user",
+              "lastName": "userLastName",
+              "contactInformation": "info",
+              "email": "user@gmail.com"
             }
         """;
 
         searchJson = """
             {
               "filter": {
-                "firstName": "Test",
-                "lastName": "Test"
+                "firstName": "user",
+                "lastName": "userLastName"
               },
               "page": 0,
               "size": 10
@@ -55,19 +65,18 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Test"))
-                .andExpect(jsonPath("$.lastName").value("Test"));
+                .andExpect(jsonPath("$.firstName").value("user"))
+                .andExpect(jsonPath("$.lastName").value("userLastName"));
     }
 
     @Test
     void testSearchUsers() throws Exception {
         createUser();
-
         mockMvc.perform(post("/users/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(searchJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].firstName").value("Test"))
-                .andExpect(jsonPath("$.content[0].lastName").value("Test"));
+                .andExpect(jsonPath("$.users[0].firstName").value("user"))
+                .andExpect(jsonPath("$.users[0].lastName").value("userLastName"));
     }
 }

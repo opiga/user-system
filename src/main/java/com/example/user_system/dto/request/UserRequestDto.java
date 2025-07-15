@@ -1,5 +1,6 @@
 package com.example.user_system.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +27,10 @@ public class UserRequestDto {
     @NotBlank
     @Size(max = 200)
     private String contactInformation;
+
+    @NotBlank
+    @Email
+    @Size(max = 100)
+    private String email;
+
 }
