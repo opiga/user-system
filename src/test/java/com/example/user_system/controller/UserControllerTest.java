@@ -13,7 +13,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +30,10 @@ public class UserControllerTest {
     private UserService userService;
 
     private String userJson;
+
     private String searchJson;
+
+    private String updateJson;
 
     @BeforeEach
     void setUp() {
@@ -49,6 +54,15 @@ public class UserControllerTest {
               },
               "page": 0,
               "size": 10
+            }
+        """;
+
+        updateJson = """
+            {
+              "firstName": "Updated",
+              "lastName": "User",
+              "contactInformation": "123456789",
+              "email": "updated@example.com"
             }
         """;
     }
@@ -88,4 +102,25 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.users[0].firstName").value("Test"))
                 .andExpect(jsonPath("$.users[0].lastName").value("Test"));
     }
+
+    @Test
+    void testUpdateUser() throws Exception {
+        Long userId = 1L;
+
+        UserResponseDto updatedResponse = new UserResponseDto();
+        updatedResponse.setFirstName("Updated");
+        updatedResponse.setLastName("User");
+
+        when(userService.updateUser(eq(userId), any(UserRequestDto.class))).thenReturn(updatedResponse);
+
+
+
+        mockMvc.perform(put("/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Updated"))
+                .andExpect(jsonPath("$.lastName").value("User"));
+    }
+
 }
